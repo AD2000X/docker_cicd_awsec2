@@ -1,4 +1,4 @@
-name: Deploy to AWS EC2
+name: Deploy to EC2
 
 on:
   push:
@@ -10,19 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Deploy over SSH
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.AWS_HOST }}
-        username: ${{ secrets.AWS_USER }}
-        key: ${{ secrets.AWS_KEY }}
-        script: |
-          cd ~/hello-docker-cicd-aws
-          git pull origin main
-          docker stop hello || true
-          docker rm hello || true
-          docker build -t hello .
-          docker run -d -p 80:5000 --name hello hello
+      - name: Setup SSH key
+        run: |
+          echo "${{ secrets.AWS_KEY }}" > key.pem
+          chmod 400 key.pem
+
+      - name: Connect & Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
+            # prepare work catalogue
+            if [ ! -d docker_cicd_awsec2 ]; then
+              git clone https://github.com/AD2000X/docker_cicd_awsec2.git
+            fi
+            cd docker_cicd_awsec2
+            git pull origin main
+
+            # Rebuilf Docker
+            docker rm -f flask-app || true
+            docker build -t flask-app .
+            docker run -d -p 80:5000 --name flask-app flask-app
+          EOF

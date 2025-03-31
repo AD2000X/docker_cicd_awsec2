@@ -13,13 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_HOST }}
-          username: ${{ secrets.AWS_USER }}
-          key: ${{ secrets.AWS_KEY }}
-          script: |
+      - name: Setup SSH key
+        run: |
+          echo "${{ secrets.AWS_KEY }}" > key.pem
+          chmod 400 key.pem
+
+      - name: Connect & Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
             # prepare work catalogue
             if [ ! -d docker_cicd_awsec2 ]; then
               git clone https://github.com/AD2000X/docker_cicd_awsec2.git
@@ -27,7 +28,8 @@ jobs:
             cd docker_cicd_awsec2
             git pull origin main
 
-            # Rebuild Docker
+            # Rebuilf Docker
             docker rm -f flask-app || true
             docker build -t flask-app .
             docker run -d -p 80:5000 --name flask-app flask-app
+          EOF

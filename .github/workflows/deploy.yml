@@ -21,6 +21,9 @@ jobs:
       - name: Connect & Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
+            # Install git if needed
+            command -v git || sudo dnf install -y git
+            
             # prepare work catalogue
             if [ ! -d docker_cicd_awsec2 ]; then
               git clone https://github.com/AD2000X/docker_cicd_awsec2.git
@@ -28,7 +31,7 @@ jobs:
             cd docker_cicd_awsec2
             git pull origin main
 
-            # Rebuilf Docker
+            # Rebuild Docker
             docker rm -f flask-app || true
             docker build -t flask-app .
             docker run -d -p 80:5000 --name flask-app flask-app

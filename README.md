@@ -1,5 +1,4 @@
 # Minimalist Project Showcasing Docker, CI/CD, Flask, and AWS
-# Minimalist Project Showcasing Docker, CI/CD, Flask, and AWS
 
 This project demonstrates a complete CI/CD pipeline for deploying a minimal Flask application to AWS EC2 using Docker and GitHub Actions.
 

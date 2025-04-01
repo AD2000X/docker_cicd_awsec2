@@ -2,7 +2,7 @@
 
 This project demonstrates a complete CI/CD pipeline for deploying a minimal Flask application to AWS EC2 using Docker and GitHub Actions.
 
-![Deployed Application](https://i.imgur.com/7i3HYiJ.png)
+![Deployed Application](https://github.com/AD2000X/docker_cicd_awsec2/blob/main/images/successfully%20deploy.jpg)
 
 ## Project Structure
 

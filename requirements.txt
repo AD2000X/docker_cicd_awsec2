@@ -1,1 +1,4 @@
-flask
+# Lists Python package dependencies
+# Used by pip to install required libraries
+
+flask  # The Flask web framework package

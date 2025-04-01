@@ -167,3 +167,4 @@ When you're done with the project, to avoid unnecessary AWS charges:
 - This project uses the simplest possible Flask application to demonstrate the CI/CD pipeline
 - The GitHub Actions workflow uses SSH to deploy to EC2
 - All components are configured for minimal setup while showing core concepts
+- It is recommended to push changes to a feature branch first, then merge into main via pull request.
